@@ -6,7 +6,7 @@
 /*   By: mhirvasm <mhirvasm@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 15:15:31 by mhirvasm          #+#    #+#             */
-/*   Updated: 2025/07/21 17:39:13 by mhirvasm         ###   ########.fr       */
+/*   Updated: 2025/07/23 16:01:29 by mhirvasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,15 +31,9 @@ void	handle_signal(int sig, siginfo_t *info, void *context)
 	{
 		write(1, &c, 1);
 		bit_index = 0;
-		if (g_client_pid > 0)
-		{
-			if (kill(g_client_pid, SIGUSR1) == -1)
-				perror("kill failed");
-			else
-				write(1, "[ACK sent]\n", 11);
-		}
 		c = 0;
 	}
+	kill(g_client_pid, SIGUSR1);
 }
 
 int	main(void)

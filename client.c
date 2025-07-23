@@ -6,7 +6,7 @@
 /*   By: mhirvasm <mhirvasm@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 15:15:40 by mhirvasm          #+#    #+#             */
-/*   Updated: 2025/07/21 17:36:53 by mhirvasm         ###   ########.fr       */
+/*   Updated: 2025/07/23 16:02:16 by mhirvasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,20 @@ void	handle_ack(int sig)
 {
 	(void)sig;
 	g_ack_received = 1;
-	write(1, "[ACK received]\n", 15);
+	//write(1, "[ACK received]\n", 15);
 }
+
+void	wait_for_ack(void)
+{
+	int	attempts;
+	
+	attempts = 0;
+	while (!g_ack_received && attempts++ < 1000000)
+		usleep(1);
+	if (!g_ack_received)
+		ft_printf("Didnt receive ackg in time\n");
+}
+
 
 void	send_char_as_bits(unsigned	char c, int pid)
 {
@@ -34,14 +46,12 @@ void	send_char_as_bits(unsigned	char c, int pid)
 			kill(pid, SIGUSR1);
 		else
 			kill(pid, SIGUSR2);
-		usleep(1000);
+		wait_for_ack();
 		current_bit--;
+		g_ack_received = 0;
 	}
-	ft_printf("Waiting for ACK...\n");
-	while (!g_ack_received)
-		pause();
-	ft_printf("ACK received. Sending next character.\n");
-	g_ack_received = 0;
+	//ft_printf("Waiting for ACK...\n");
+	//ft_printf("ACK received. Sending next character.\n");
 }
 
 int	main(int argc, char *argv[])
@@ -61,6 +71,11 @@ int	main(int argc, char *argv[])
 		return (1);
 	}
 	pid = ft_atoi(argv[1]);
+	if (pid < 0)
+	{
+		ft_printf("dont try to log me out!! >)\n");
+		return (0);
+	}
 	str = argv[2];
 	sa.sa_handler = handle_ack;
 	sigemptyset(&sa.sa_mask);
