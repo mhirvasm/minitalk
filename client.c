@@ -6,13 +6,11 @@
 /*   By: mhirvasm <mhirvasm@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 15:15:40 by mhirvasm          #+#    #+#             */
-/*   Updated: 2025/07/23 16:02:16 by mhirvasm         ###   ########.fr       */
+/*   Updated: 2025/07/25 14:40:46 by mhirvasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
-#include "libft/libft.h"
-#include "libft/printf/ft_printf.h"
 
 volatile sig_atomic_t	g_ack_received = 0;
 
@@ -20,20 +18,18 @@ void	handle_ack(int sig)
 {
 	(void)sig;
 	g_ack_received = 1;
-	//write(1, "[ACK received]\n", 15);
 }
 
 void	wait_for_ack(void)
 {
 	int	attempts;
-	
+
 	attempts = 0;
 	while (!g_ack_received && attempts++ < 1000000)
 		usleep(1);
 	if (!g_ack_received)
-		ft_printf("Didnt receive ackg in time\n");
+		ft_printf("Didnt receive ackg in time.\n");
 }
-
 
 void	send_char_as_bits(unsigned	char c, int pid)
 {
@@ -50,8 +46,6 @@ void	send_char_as_bits(unsigned	char c, int pid)
 		current_bit--;
 		g_ack_received = 0;
 	}
-	//ft_printf("Waiting for ACK...\n");
-	//ft_printf("ACK received. Sending next character.\n");
 }
 
 int	main(int argc, char *argv[])
@@ -59,11 +53,6 @@ int	main(int argc, char *argv[])
 	int					pid;
 	char				*str;
 	struct sigaction	sa;
-
-	struct timeval start, end; // THIS CAN BE REMOVED JUST FOR TESTING 
-	long elapsed_microseconds; // TESTING
-
-	gettimeofday(&start, NULL); // ⏱️ start timing TESTING
 
 	if (argc != 3)
 	{
@@ -83,18 +72,6 @@ int	main(int argc, char *argv[])
 	sigaction(SIGUSR1, &sa, NULL);
 	while (*str)
 		send_char_as_bits(*str++, pid);
-
-	send_char_as_bits('\0', pid); // end-of-message
-
-	gettimeofday(&end, NULL); // ⏱️ end timing
-
-	elapsed_microseconds = (end.tv_sec - start.tv_sec) * 1000000L 
-					 + (end.tv_usec - start.tv_usec);
-
-	printf("Sent message in %ld microseconds (%.2f ms)\n",
-		elapsed_microseconds,
-		elapsed_microseconds / 1000.0);
-
-
+	send_char_as_bits('\0', pid);
 	return (0);
 }

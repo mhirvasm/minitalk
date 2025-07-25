@@ -6,7 +6,7 @@
 /*   By: mhirvasm <mhirvasm@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 13:53:00 by mhirvasm          #+#    #+#             */
-/*   Updated: 2025/04/29 12:18:19 by mhirvasm         ###   ########.fr       */
+/*   Updated: 2025/07/25 14:36:57 by mhirvasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,6 @@ size_t	ft_strlcat(char *dst, const char *src, size_t size)
 			counter++;
 		}
 		dst[dest_len + counter] = '\0';
-	}	
+	}
 	return (dest_len + src_len);
 }
