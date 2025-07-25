@@ -6,7 +6,7 @@
 /*   By: mhirvasm <mhirvasm@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 15:15:40 by mhirvasm          #+#    #+#             */
-/*   Updated: 2025/07/25 14:40:46 by mhirvasm         ###   ########.fr       */
+/*   Updated: 2025/07/25 15:49:26 by mhirvasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,30 +48,40 @@ void	send_char_as_bits(unsigned	char c, int pid)
 	}
 }
 
+void	validate_pid(int pid)
+{
+	if (pid <= 0)
+	{
+		ft_printf("❌Invalid PID (%d). Must be > 0\n", pid);
+		exit(EXIT_FAILURE);
+	}
+	if (kill(pid, 0) == -1)
+	{
+		ft_printf("❌No such process or no permission for PID %d\n", pid);
+		exit(EXIT_FAILURE);
+	}
+}
+
 int	main(int argc, char *argv[])
 {
 	int					pid;
-	char				*str;
+	char				*message;
 	struct sigaction	sa;
 
 	if (argc != 3)
 	{
 		ft_printf("Usage: %s <PID> <message>\n", argv[0]);
-		return (1);
-	}
-	pid = ft_atoi(argv[1]);
-	if (pid < 0)
-	{
-		ft_printf("dont try to log me out!! >)\n");
 		return (0);
 	}
-	str = argv[2];
+	pid = ft_atoi(argv[1]);
+	validate_pid(pid);
+	message = argv[2];
 	sa.sa_handler = handle_ack;
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = SA_RESTART;
 	sigaction(SIGUSR1, &sa, NULL);
-	while (*str)
-		send_char_as_bits(*str++, pid);
+	while (*message)
+		send_char_as_bits(*message++, pid);
 	send_char_as_bits('\0', pid);
 	return (0);
 }

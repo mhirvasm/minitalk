@@ -21,6 +21,7 @@ $(NAME_SERVER): $(SRCS_SERVER)
 $(NAME_CLIENT): $(SRCS_CLIENT)
 	$(CC) $(CFLAGS) -o $(NAME_CLIENT) $(SRCS_CLIENT) $(LIBFT)
 
+
 clean:
 	make clean -C $(LIBFT_DIR)
 

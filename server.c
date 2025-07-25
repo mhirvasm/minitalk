@@ -6,7 +6,7 @@
 /*   By: mhirvasm <mhirvasm@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/21 15:15:31 by mhirvasm          #+#    #+#             */
-/*   Updated: 2025/07/25 14:40:32 by mhirvasm         ###   ########.fr       */
+/*   Updated: 2025/07/25 15:00:01 by mhirvasm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,11 @@ void	handle_signal(int sig, siginfo_t *info, void *context)
 	bit_index++;
 	if (bit_index == 8)
 	{
-		write(1, &c, 1);
+		if (write(1, &c, 1) == -1)
+		{
+			ft_printf("Write failing, exiting program.\n");
+			exit (EXIT_FAILURE);
+		}
 		if (c == '\0')
 		{
 			ft_printf("\nEnd of message from client %d\n", g_client_pid);
@@ -47,7 +51,7 @@ int	main(void)
 	sa.sa_flags = SA_RESTART | SA_SIGINFO;
 	sigaction(SIGUSR1, &sa, NULL);
 	sigaction(SIGUSR2, &sa, NULL);
-	ft_printf("Server PID: %d\n", getpid());
+	ft_printf("📡Server ready. PID: %d\n", getpid());
 	while (1337)
 		pause();
 	return (0);
